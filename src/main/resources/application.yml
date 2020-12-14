@@ -1,0 +1,60 @@
+logging:
+  file: ${user.home}/marketing_events/logs/marketing_events.log
+server:
+  port: 8085
+spring:
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://ruleengine.cyglulrs2sd6.us-east-2.rds.amazonaws.com:5432/customer_events
+#    username: postgres
+#    password: postgres
+#  jmx:
+#    enabled: false
+#  jpa:
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        jdbc:
+#          lob:
+#            non_contextual_creation: true
+#    show-sql: true
+url:
+  ruleEngine : http://ec2-18-188-157-35.us-east-2.compute.amazonaws.com:8091/syzegee/v1/ruleengine
+  createSite: http://3.133.121.247/studio/api
+  getRuleEngine: localhost:8090/syzegee/v1/ruleengine/runrule
+
+
+  deployment:
+    url: http://ec2-18-222-22-123.us-east-2.compute.amazonaws.com:9192/api/1/target/create
+    replace: true
+    env: default
+    templateName: remote
+    repoUrl: ssh://crafter@ec2-13-59-46-60.us-east-2.compute.amazonaws.com:/opt/crafter/data/repos/sites/member-templates/published
+    repoBranch: live
+    engineUrl: http://ec2-18-222-22-123.us-east-2.compute.amazonaws.com:9080
+
+#Mautic connections
+automation:
+  dbUser: root
+  dbPassword: root1234
+  dbHost: localhost
+  adminUsername: pnostalgie
+  adminEmail: nostalgie@gmail.com
+  adminFirstname: Nostalgie
+  adminLastname: Patrice
+  siteUrl: https://crm.sawa.rw/new/instance/index.php
+#KAFKA
+kafka:
+  bootstrap-servers: 3.22.79.216:9092
+  consumer_groupId: customer
+#    customer.updated,
+#    customer.deleted,
+#    customer.rule.created,
+#    customer.rule.updated,
+#    customer.rule.deleted,
+#   customer.template.created
+
+
+
