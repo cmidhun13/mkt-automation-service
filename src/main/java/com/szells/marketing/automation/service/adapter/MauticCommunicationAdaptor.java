@@ -3,12 +3,16 @@ package com.szells.marketing.automation.service.adapter;
 
 
 import com.google.common.base.Strings;
+import com.szells.marketing.automation.service.constants.Constants;
 import com.szells.marketing.automation.service.events.MarketingAutomationCommunicationEvent;
+import com.szells.marketing.automation.service.events.MarketingAutomationEvent;
 import com.szells.marketing.automation.service.events.MarketingAutomationInstanceEvent;
 
 import com.szells.marketing.automation.service.model.ContactResult;
+import com.szells.marketing.automation.service.service.MessageProducer;
 import com.szells.marketing.automation.service.util.CommunicationConfig;
 
+import com.szells.marketing.automation.service.util.JsonUtil;
 import com.szells.marketing.automation.service.util.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -32,7 +36,10 @@ public class MauticCommunicationAdaptor {
 
     @Autowired
     private CommunicationConfig communicationConfig;
-
+    @Autowired
+    private MessageProducer messageProducer;
+    @Autowired
+    private JsonUtil util;
     @Value("${automation.dbUser}")
     private String dbUser;
     @Value("${automation.dbHost}")
@@ -72,7 +79,15 @@ public class MauticCommunicationAdaptor {
             result = RuleEngineAdapter.callPostRestAPI(SITE_URL, headers, map); // TODO will optimize the util later.
             System.out.println("correlationId: "+ "A new marking instance has been created \n"+ result);
             Log.i("This is response on creating marketing tool: "+result);
-           // messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response.replaceAll("\\\\", "")); // TO DO move to Service classs
+            MarketingAutomationEvent marketingAutomationEvent = MarketingAutomationEvent.builder()
+                    .customerEmail(adminEmail)
+                    .customerOrganizationName(marketingAutomationInstanceEvent.getCusOrgName())
+                    .customerUserName(dbUser)
+                    .customerFirstName(adminFirstname)
+                    .customerLastName(adminLastname)
+                    .customerId(marketingAutomationInstanceEvent.getCustomerId()).build();
+            String response = util.objectToString(marketingAutomationEvent);
+            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
             Log.i("Published to kafka success topic");
         }
         return result;

@@ -13,6 +13,7 @@ public class Constants {
     public static final String MARKETING_AUTOMATION_CREATED = "customer.created"; // TODO create new topic and change it later.
     public static final String SEND_EMAIL = "email.send";
     public static final String EMAIl_CREATED = "email.created";
+    public static final String CUSTOMER_STATUS_UPDATED = "customer.status.updated";
 
 
     public static final String Cookie = "cookie";

@@ -35,7 +35,7 @@ public class MarketingAutomationHandler {
     @Tolerate
     public MarketingAutomationHandler() {
     }
-    @KafkaListener(topics = {Constants.CUSTOMER_CREATED,  Constants.MARKETING_AUTOMATION, Constants.SEND_EMAIL})
+    @KafkaListener(topics = {Constants.CUSTOMER_CREATED,  Constants.MARKETING_AUTOMATION, Constants.SEND_EMAIL,Constants.CUSTOMER_STATUS_UPDATED})
     public void consumeCustomerEvent(ConsumerRecord<String, Object> event) {
         try {
             Log.i("Initiate consumeCustomerEvent in MarketingAutomationHandler" + " - CorrelationId: " + event);
@@ -52,6 +52,10 @@ public class MarketingAutomationHandler {
                 System.out.println("Inside Marketing Automation----Topic" + event.value().toString());
                 MarketingAutomationCommunicationEvent marketingAutomationCommunicationEvent = util.getMarketingAutomationCommunicationEventJson(event.value().toString());
                 marketingAutomationService.sendCommunication(marketingAutomationCommunicationEvent);
+            } if(event.topic().equalsIgnoreCase(Constants.CUSTOMER_STATUS_UPDATED)){
+                System.out.println("Inside customer status update----Topic" + event.value().toString());
+                MarketingAutomationInstanceEvent marketingAutomationInstanceEvent = util.getMarketingAutomationInstanceEventJson(event.value().toString());
+                marketingAutomationService.createMarketingAutomationInstance(marketingAutomationInstanceEvent);
             }
             System.out.println("End of consumeCustomerEvent in MarketingAutomationHandler");
         } catch (Exception ex){
