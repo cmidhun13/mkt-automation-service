@@ -87,7 +87,9 @@ public class MauticCommunicationAdaptor {
                     .customerLastName(adminLastname)
                     .customerId(marketingAutomationInstanceEvent.getCustomerId()).build();
             String response = util.objectToString(marketingAutomationEvent);
-            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
+            result = response;
+            Log.i("This is response on creating marketing tool: "+result);
+            //messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
             Log.i("Published to kafka success topic");
         }
         return result;
