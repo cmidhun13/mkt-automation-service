@@ -18,5 +18,8 @@ public class MarketingAutomationInstanceEvent {
     private String correlationId;
     private String customerRuleEngineId;
     private String email;
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerUserName;
 
 }

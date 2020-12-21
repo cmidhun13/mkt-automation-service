@@ -70,26 +70,26 @@ public class MauticCommunicationAdaptor {
             map.add("db_name", marketingAutomationInstanceEvent.getCusOrgName());
             map.add("db_user", dbUser);
             map.add("db_password", dbPassword);
-            map.add("admin_username", adminUsername);
-            map.add("admin_email", adminEmail);
-            map.add("admin_firstname", adminFirstname);
-            map.add("admin_lastname", adminLastname);
+            map.add("admin_username", marketingAutomationInstanceEvent.getCustomerUserName());
+            map.add("admin_email", marketingAutomationInstanceEvent.getEmail());
+            map.add("admin_firstname", marketingAutomationInstanceEvent.getCustomerFirstName());
+            map.add("admin_lastname", marketingAutomationInstanceEvent.getCustomerLastName());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
             headers.setBasicAuth("admin","123456");
             result = RuleEngineAdapter.callPostRestAPI(SITE_URL, headers, map); // TODO will optimize the util later.
             System.out.println("correlationId: "+ "A new marking instance has been created \n"+ result);
             Log.i("This is response on creating marketing tool: "+result);
             MarketingAutomationEvent marketingAutomationEvent = MarketingAutomationEvent.builder()
-                    .customerEmail(adminEmail)
+                    .customerEmail(marketingAutomationInstanceEvent.getEmail())
                     .customerOrganizationName(marketingAutomationInstanceEvent.getCusOrgName())
-                    .customerUserName(dbUser)
-                    .customerFirstName(adminFirstname)
-                    .customerLastName(adminLastname)
+                    .customerUserName(marketingAutomationInstanceEvent.getCustomerUserName())
+                    .customerFirstName(marketingAutomationInstanceEvent.getCustomerFirstName())
+                    .customerLastName(marketingAutomationInstanceEvent.getCustomerLastName())
                     .customerId(marketingAutomationInstanceEvent.getCustomerId()).build();
             String response = util.objectToString(marketingAutomationEvent);
             result = response;
             Log.i("This is response on creating marketing tool: "+result);
-            //messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
+            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
             Log.i("Published to kafka success topic");
         }
         return result;

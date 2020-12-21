@@ -42,11 +42,11 @@ public class MarketingAutomationHandler {
         try {
             Log.i("Initiate consumeCustomerEvent in MarketingAutomationHandler" + " - CorrelationId: " + event);
 
-           if(event.topic().equalsIgnoreCase(Constants.CUSTOMER_CREATED)){
+           /*if(event.topic().equalsIgnoreCase(Constants.CUSTOMER_CREATED)){
                System.out.println("Marketing Event is created " + event.value().toString());
-               String response = mauticCommunicationAdaptor.createMauticInstance(util.getMarketingAutomationInstanceEventJson(event.value().toString()));
-               System.out.println("marketing event is created by mautic"+response);
-           }
+              // String response = mauticCommunicationAdaptor.createMauticInstance(util.getMarketingAutomationInstanceEventJson(event.value().toString()));
+               //System.out.println("marketing event is created by mautic"+response);
+           }*/
             if(event.topic().equalsIgnoreCase(Constants.MARKETING_AUTOMATION)){
                 System.out.println("Inside Marketing Automation----Topic" + event.value().toString());
                 MarketingAutomationInstanceEvent marketingAutomationInstanceEvent = util.getMarketingAutomationInstanceEventJson(event.value().toString());
