@@ -3,12 +3,16 @@ package com.szells.marketing.automation.service.adapter;
 
 
 import com.google.common.base.Strings;
+import com.szells.marketing.automation.service.constants.Constants;
 import com.szells.marketing.automation.service.events.MarketingAutomationCommunicationEvent;
+import com.szells.marketing.automation.service.events.MarketingAutomationEvent;
 import com.szells.marketing.automation.service.events.MarketingAutomationInstanceEvent;
 
 import com.szells.marketing.automation.service.model.ContactResult;
+import com.szells.marketing.automation.service.service.MessageProducer;
 import com.szells.marketing.automation.service.util.CommunicationConfig;
 
+import com.szells.marketing.automation.service.util.JsonUtil;
 import com.szells.marketing.automation.service.util.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
@@ -32,7 +36,10 @@ public class MauticCommunicationAdaptor {
 
     @Autowired
     private CommunicationConfig communicationConfig;
-
+    @Autowired
+    private MessageProducer messageProducer;
+    @Autowired
+    private JsonUtil util;
     @Value("${automation.dbUser}")
     private String dbUser;
     @Value("${automation.dbHost}")
@@ -63,16 +70,26 @@ public class MauticCommunicationAdaptor {
             map.add("db_name", marketingAutomationInstanceEvent.getCusOrgName());
             map.add("db_user", dbUser);
             map.add("db_password", dbPassword);
-            map.add("admin_username", adminUsername);
-            map.add("admin_email", adminEmail);
-            map.add("admin_firstname", adminFirstname);
-            map.add("admin_lastname", adminLastname);
+            map.add("admin_username", marketingAutomationInstanceEvent.getCustomerUserName());
+            map.add("admin_email", marketingAutomationInstanceEvent.getEmail());
+            map.add("admin_firstname", marketingAutomationInstanceEvent.getCustomerFirstName());
+            map.add("admin_lastname", marketingAutomationInstanceEvent.getCustomerLastName());
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
             headers.setBasicAuth("admin","123456");
             result = RuleEngineAdapter.callPostRestAPI(SITE_URL, headers, map); // TODO will optimize the util later.
             System.out.println("correlationId: "+ "A new marking instance has been created \n"+ result);
             Log.i("This is response on creating marketing tool: "+result);
-           // messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response.replaceAll("\\\\", "")); // TO DO move to Service classs
+            MarketingAutomationEvent marketingAutomationEvent = MarketingAutomationEvent.builder()
+                    .customerEmail(marketingAutomationInstanceEvent.getEmail())
+                    .customerOrganizationName(marketingAutomationInstanceEvent.getCusOrgName())
+                    .customerUserName(marketingAutomationInstanceEvent.getCustomerUserName())
+                    .customerFirstName(marketingAutomationInstanceEvent.getCustomerFirstName())
+                    .customerLastName(marketingAutomationInstanceEvent.getCustomerLastName())
+                    .customerId(marketingAutomationInstanceEvent.getCustomerId()).build();
+            String response = util.objectToString(marketingAutomationEvent);
+            result = response;
+            Log.i("This is response on creating marketing tool: "+result);
+            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
             Log.i("Published to kafka success topic");
         }
         return result;
