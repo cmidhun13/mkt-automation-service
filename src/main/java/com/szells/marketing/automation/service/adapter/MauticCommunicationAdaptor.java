@@ -58,7 +58,6 @@ public class MauticCommunicationAdaptor {
     @Value("${automation.siteUrl}")
     public  String SITE_URL;
 
-    http://139.162.165.57:84/api/multiple/create
     
     public String createMauticInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) {
         Log.i("Initiate sendCustomerActivationEmail in CommunicationConnector" + marketingAutomationInstanceEvent.getCorrelationId());
