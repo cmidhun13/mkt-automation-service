@@ -58,6 +58,8 @@ public class MauticCommunicationAdaptor {
     @Value("${automation.siteUrl}")
     public  String SITE_URL;
 
+    http://139.162.165.57:84/api/multiple/create
+    
     public String createMauticInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) {
         Log.i("Initiate sendCustomerActivationEmail in CommunicationConnector" + marketingAutomationInstanceEvent.getCorrelationId());
         String result = null;
@@ -65,17 +67,18 @@ public class MauticCommunicationAdaptor {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-            map.add("site_url", "https://"+marketingAutomationInstanceEvent.getCusOrgName()+".sawa.rw");
+            map.add("site_url", "http://139.162.165.57:87");
             map.add("db_host", dbHost);
             map.add("db_name", marketingAutomationInstanceEvent.getCusOrgName());
             map.add("db_user", dbUser);
             map.add("db_password", dbPassword);
-            map.add("admin_username", marketingAutomationInstanceEvent.getCustomerUserName());
-            map.add("admin_email", marketingAutomationInstanceEvent.getEmail());
-            map.add("admin_firstname", marketingAutomationInstanceEvent.getCustomerFirstName());
-            map.add("admin_lastname", marketingAutomationInstanceEvent.getCustomerLastName());
+            map.add("admin_username", "patrice");
+            map.add("admin_email", "patrice@hviewtech.com");
+            map.add("admin_firstname", "Patrice");
+            map.add("admin_lastname", "Nostalgie");
+            map.add("admin_password", "123456");
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-            headers.setBasicAuth("admin","123456");
+            headers.setBasicAuth("hviewtech","123456");
             result = RuleEngineAdapter.callPostRestAPI(SITE_URL, headers, map); // TODO will optimize the util later.
             System.out.println("correlationId: "+ "A new marking instance has been created \n"+ result);
             Log.i("This is response on creating marketing tool: "+result);

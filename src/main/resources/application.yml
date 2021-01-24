@@ -44,7 +44,8 @@ automation:
   adminEmail: nostalgie@gmail.com
   adminFirstname: Nostalgie
   adminLastname: Patrice
-  siteUrl: https://crm.sawa.rw/new/instance/index.php
+ # siteUrl: https://crm.sawa.rw/new/instance/index.php
+  siteUrl: http://139.162.165.57:84/api/multiple/create
 #KAFKA
 kafka:
   bootstrap-servers: 3.22.79.216:9092
