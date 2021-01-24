@@ -85,6 +85,7 @@ public class MarketingAutomationService {
                     .emailId(marketingAutomationCommunicationEvent.getEmail())
                     .build();
             // TO DO publish another Event to Customer construct same way as marketing but you can do it later.
+            eventPublisher.send(Constants.MARKETING_AUTOMATION_CREATED,util.objectToString(marketingAutomationResponse));
             return marketingAutomationResponse;
         }
         else if(marketingAutomationProvider.equalsIgnoreCase("exponea")){
