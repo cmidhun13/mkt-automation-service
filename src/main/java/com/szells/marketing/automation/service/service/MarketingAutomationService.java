@@ -59,7 +59,7 @@ public class MarketingAutomationService {
             marketingInstanceCreatedEvent.setMarketingAutomationTenantUrl("https://"+marketingAutomationInstanceEvent.getCusOrgName()+".sawa.rw");
             String jsonMarketingCreatedEvent = util.objectToString(marketingInstanceCreatedEvent);
             System.out.println("Publishing the event for marketing created : "+ jsonMarketingCreatedEvent);
-            eventPublisher.send(Constants.CUSTOMER_CREATED, jsonMarketingCreatedEvent);
+            eventPublisher.send(Constants.MARKETING_AUTOMATION_CREATED, jsonMarketingCreatedEvent);
             // TO DO publish another Event to Customer construct same way as marketing but you can do it later.
             return marketingAutomationResponse;
         }
