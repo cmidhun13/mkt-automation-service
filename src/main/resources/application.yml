@@ -47,6 +47,8 @@ automation:
   adminLastname: Patrice
   siteUrl: http://139.162.165.57:87
   parentSiteUrl: http://139.162.165.57:84/api/multiple/create
+  Username: hviewtech
+  Password: 123456
 #KAFKA
 kafka:
   bootstrap-servers: 3.22.79.216:9092

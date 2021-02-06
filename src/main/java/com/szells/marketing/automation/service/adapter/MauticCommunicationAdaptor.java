@@ -5,7 +5,7 @@ package com.szells.marketing.automation.service.adapter;
 import com.google.common.base.Strings;
 import com.szells.marketing.automation.service.constants.Constants;
 import com.szells.marketing.automation.service.events.MarketingAutomationCommunicationEvent;
-import com.szells.marketing.automation.service.events.MarketingAutomationEvent;
+import com.szells.marketing.automation.service.events.MarketingCreatedEvent;
 import com.szells.marketing.automation.service.events.MarketingAutomationInstanceEvent;
 
 import com.szells.marketing.automation.service.model.ContactResult;
@@ -62,13 +62,22 @@ public class MauticCommunicationAdaptor {
     
     @Value("${automation.siteUrl}")
     public  String site_url;
+    
+    @Value("${automation.Username}")
+    public  String authUsername;
+    @Value("${automation.Password}")
+    public  String authPassword;
 
     
-    public MarketingAutomationEvent createMauticInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) {
+    /**
+     * @param marketingAutomationInstanceEvent
+     * @return
+     */
+    public MarketingCreatedEvent createMauticInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) {
         Log.i("Initiate sendCustomerActivationEmail in CommunicationConnector" + marketingAutomationInstanceEvent.getCorrelationId());
         String result = null;
-        MarketingAutomationEvent marketingAutomationEvent=null;
-        String url = SITE_URL;
+        MarketingCreatedEvent marketingCreatedEvent=null;
+        String site_url = "https://"+marketingAutomationInstanceEvent.getCusOrgName()+".sawa.rw";
         if(!Strings.isNullOrEmpty(marketingAutomationInstanceEvent.getCusOrgName())){
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -79,18 +88,18 @@ public class MauticCommunicationAdaptor {
             map.add("db_user", dbUser);
             map.add("db_password", dbPassword);
             
-            map.add("admin_username", adminUsername);
-            map.add("admin_password", adminPassword);
-            map.add("admin_firstname", adminFirstname);
-            map.add("admin_lastname", adminLastname);
-            map.add("admin_email", adminEmail);
+            map.add("admin_username", marketingAutomationInstanceEvent.getCustomerUserName());
+            map.add("admin_password", marketingAutomationInstanceEvent.getCustomerPassWord());
+            map.add("admin_firstname", marketingAutomationInstanceEvent.getCustomerFirstName());
+            map.add("admin_lastname", marketingAutomationInstanceEvent.getCustomerLastName());
+            map.add("admin_email", marketingAutomationInstanceEvent.getEmail());
            
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-            headers.setBasicAuth("hviewtech","123456");
-            result = RuleEngineAdapter.callPostRestAPI(url, headers, map); // TODO will optimize the util later.
+            headers.setBasicAuth(authUsername,authPassword);
+            result = RuleEngineAdapter.callPostRestAPI(SITE_URL, headers, map); // TODO will optimize the util later.
             System.out.println("correlationId: "+ "A new marking instance has been created \n"+ result);
             Log.i("This is response on creating marketing tool: "+result);
-             marketingAutomationEvent = MarketingAutomationEvent.builder()
+            marketingCreatedEvent = MarketingCreatedEvent.builder()
                     .customerEmail(marketingAutomationInstanceEvent.getEmail())
                     .customerOrganizationName(marketingAutomationInstanceEvent.getCusOrgName())
                     .customerUserName(marketingAutomationInstanceEvent.getCustomerUserName())
@@ -100,10 +109,10 @@ public class MauticCommunicationAdaptor {
            // String response = util.objectToString(marketingAutomationEvent);
           //  result = response;
             Log.i("This is response on creating marketing tool: "+result);
-            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, marketingAutomationEvent.toString()); // TO DO move to Service classs
+           // messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, marketingAutomationEvent.toString()); // TO DO move to Service classs
             Log.i("Published to kafka success topic");
         }
-        return marketingAutomationEvent;
+        return marketingCreatedEvent;
     }
 
 /*
@@ -128,7 +137,7 @@ public class MauticCommunicationAdaptor {
     }
 */
     public String sendEmailforTemplate(MarketingAutomationCommunicationEvent marketingAutomationCommunicationEvent){
-        String url = "https://crm.sawa.rw/emails/"+marketingAutomationCommunicationEvent.getEmail()+"/contact/"+marketingAutomationCommunicationEvent.getContactId()+"/send";
+        String url = "https://crm.sawa.rw/api/emails/"+marketingAutomationCommunicationEvent.getEmail()+"/contact/"+marketingAutomationCommunicationEvent.getContactId()+"/send";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 

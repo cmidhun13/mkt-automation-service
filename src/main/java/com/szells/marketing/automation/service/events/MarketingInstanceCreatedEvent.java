@@ -19,6 +19,7 @@ public class MarketingInstanceCreatedEvent {
     private String email;
     private String marketingInstanceCreatedStatus;
     private String marketingAutomationTenantUrl;
+    private boolean status;
 
 
 }

@@ -12,6 +12,7 @@ import com.szells.marketing.automation.service.adapter.RuleEngineAdapter;
 import com.szells.marketing.automation.service.constants.Constants;
 import com.szells.marketing.automation.service.events.MarketingAutomationCommunicationEvent;
 import com.szells.marketing.automation.service.events.MarketingAutomationInstanceEvent;
+import com.szells.marketing.automation.service.events.MarketingCreatedEvent;
 import com.szells.marketing.automation.service.adapter.MauticCommunicationAdaptor;
 import com.szells.marketing.automation.service.events.MarketingInstanceCreatedEvent;
 import com.szells.marketing.automation.service.model.*;
@@ -46,19 +47,24 @@ public class MarketingAutomationService {
     public MarketingAutomationResponse createMarketingAutomationInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) throws IOException,Exception {
         Log.i("Initiate to create Markting instance in service " + " - CorrelationId: " + marketingAutomationInstanceEvent.getCorrelationId());
         String marketingAutomationProvider  = ruleEngineAdapter.getRuleDetailsByCustomerId(marketingAutomationInstanceEvent.getCustomerId(), marketingAutomationInstanceEvent.getCustomerRuleEngineId());
-        if(marketingAutomationProvider.equalsIgnoreCase("mautic")){
-            String response =
+        if(marketingAutomationProvider.equalsIgnoreCase((String) "mautic")){
+            MarketingCreatedEvent marketingCreatedEventResponse =
                     mauticCommunicationAdaptor.createMauticInstance(marketingAutomationInstanceEvent);
             MarketingAutomationResponse marketingAutomationResponse = MarketingAutomationResponse.builder().customerId(marketingAutomationInstanceEvent.getCustomerId())
                     .correlationId(marketingAutomationInstanceEvent.getCorrelationId())
                     .emailId(marketingAutomationInstanceEvent.getEmail())
+                    .siteCode(marketingAutomationInstanceEvent.getSiteCode())
+                    .siteName(marketingAutomationInstanceEvent.getSiteName())
+                    .siteType(marketingAutomationInstanceEvent.getSiteType())
+                    .marketingAutomationSsoUrl(marketingAutomationInstanceEvent.getMarketingAutomationSsoUrl())
+                    .status(marketingAutomationInstanceEvent.isStatus())
                     .build();
             Log.i("End of createMarketingAutomationInstance creation " + " - CorrelationId: " + marketingAutomationInstanceEvent.getCorrelationId());
             MarketingInstanceCreatedEvent marketingInstanceCreatedEvent =
-                    createMarketingAutomationCreatedEvent(response, marketingAutomationInstanceEvent.getCorrelationId(),marketingAutomationInstanceEvent.getCustomerId());
+                    createMarketingAutomationCreatedEvent(marketingAutomationResponse, marketingAutomationInstanceEvent.getCorrelationId(),marketingAutomationInstanceEvent.getCustomerId());
             marketingInstanceCreatedEvent.setMarketingAutomationTenantUrl("https://"+marketingAutomationInstanceEvent.getCusOrgName()+".sawa.rw");
             String jsonMarketingCreatedEvent = util.objectToString(marketingInstanceCreatedEvent);
-            System.out.println("Publishing the event for marketing created : "+ jsonMarketingCreatedEvent);
+            System.out.println("Publishing the event for marketing created >>>>>> "+ jsonMarketingCreatedEvent);
             eventPublisher.send(Constants.MARKETING_AUTOMATION_CREATED, jsonMarketingCreatedEvent);
             // TO DO publish another Event to Customer construct same way as marketing but you can do it later.
             return marketingAutomationResponse;
@@ -85,7 +91,7 @@ public class MarketingAutomationService {
                     .emailId(marketingAutomationCommunicationEvent.getEmail())
                     .build();
             // TO DO publish another Event to Customer construct same way as marketing but you can do it later.
-            eventPublisher.send(Constants.MARKETING_AUTOMATION_CREATED,util.objectToString(marketingAutomationResponse));
+            eventPublisher.send(Constants.SEND_EMAIL,util.objectToString(marketingAutomationResponse));
             return marketingAutomationResponse;
         }
         else if(marketingAutomationProvider.equalsIgnoreCase("exponea")){
@@ -139,8 +145,8 @@ public class MarketingAutomationService {
         return marketingCommunicationResponse;
     }
 
-    public MarketingInstanceCreatedEvent createMarketingAutomationCreatedEvent(String payload, String correlationId,String customerId) throws Exception{
-        String status = PayloadTokenizerUtil.getStatus(payload);
+    public MarketingInstanceCreatedEvent createMarketingAutomationCreatedEvent(MarketingAutomationResponse marketingAutomationResponse, String correlationId,String customerId) throws Exception{
+        String status = PayloadTokenizerUtil.getStatus(marketingAutomationResponse.isStatus());
 
         return MarketingInstanceCreatedEvent.builder()
                 .correlationId(correlationId)

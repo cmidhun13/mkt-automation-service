@@ -21,9 +21,17 @@ public class MarketingAutomationResponse {
 
     // To Do add all the response fields needed
     private String message;
+    
+    private String siteCode;
+    private String siteName;
+    private String domainName;
+    private String siteType;
+    private String marketingAutomationSsoUrl;
+    private boolean status;
+    
     @Override
     public String toString() {
     	
-    	return "{"+"customerId="+customerId+",correlationId="+correlationId+"}";
+    	return "{"+"customerId="+customerId+",correlationId="+correlationId+",status="+status+"}";
     }
 }

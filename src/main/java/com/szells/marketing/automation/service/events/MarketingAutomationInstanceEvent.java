@@ -21,5 +21,14 @@ public class MarketingAutomationInstanceEvent {
     private String customerFirstName;
     private String customerLastName;
     private String customerUserName;
+    private String customerPassWord;
+    
+    private String siteCode;
+    private String siteName;
+    private String domainName;
+    private String siteType;
+    private String marketingAutomationSsoUrl;
+    private boolean status;
+
 
 }

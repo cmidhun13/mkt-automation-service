@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MarketingAutomationEvent {
+public class MarketingCreatedEvent {
 	
     private String customerUserName;
     private String customerEmail;
@@ -22,7 +22,7 @@ public class MarketingAutomationEvent {
     private String siteName;
     private String domainName;
     private String siteType;
-    private String ssourl;
+    private String marketingaussourl;
     
     
 }
