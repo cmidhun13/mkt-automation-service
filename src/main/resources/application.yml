@@ -40,12 +40,13 @@ automation:
   dbUser: root
   dbPassword: root1234
   dbHost: localhost
-  adminUsername: pnostalgie
-  adminEmail: nostalgie@gmail.com
+  adminUsername: patrice
+  adminPassword: 123456
+  adminEmail: patrice@hviewtech.com
   adminFirstname: Nostalgie
   adminLastname: Patrice
- # siteUrl: https://crm.sawa.rw/new/instance/index.php
-  siteUrl: http://139.162.165.57:84/api/multiple/create
+  siteUrl: http://139.162.165.57:87
+  parentSiteUrl: http://139.162.165.57:84/api/multiple/create
 #KAFKA
 kafka:
   bootstrap-servers: 3.22.79.216:9092

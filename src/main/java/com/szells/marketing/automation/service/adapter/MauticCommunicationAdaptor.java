@@ -48,6 +48,8 @@ public class MauticCommunicationAdaptor {
     private String dbPassword;
     @Value("${automation.adminUsername}")
     private String adminUsername;
+    @Value("${automation.adminPassword}")
+    private String adminPassword;
     @Value("${automation.adminEmail}")
     private String adminEmail;
     @Value("${automation.adminFirstname}")
@@ -55,46 +57,53 @@ public class MauticCommunicationAdaptor {
     @Value("${automation.adminLastname}")
     private String adminLastname;
 
-    @Value("${automation.siteUrl}")
+    @Value("${automation.parentSiteUrl}")
     public  String SITE_URL;
+    
+    @Value("${automation.siteUrl}")
+    public  String site_url;
 
     
-    public String createMauticInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) {
+    public MarketingAutomationEvent createMauticInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) {
         Log.i("Initiate sendCustomerActivationEmail in CommunicationConnector" + marketingAutomationInstanceEvent.getCorrelationId());
         String result = null;
+        MarketingAutomationEvent marketingAutomationEvent=null;
+        String url = SITE_URL;
         if(!Strings.isNullOrEmpty(marketingAutomationInstanceEvent.getCusOrgName())){
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-            map.add("site_url", "http://139.162.165.57:87");
+            map.add("site_url", site_url);
             map.add("db_host", dbHost);
             map.add("db_name", marketingAutomationInstanceEvent.getCusOrgName());
             map.add("db_user", dbUser);
             map.add("db_password", dbPassword);
-            map.add("admin_username", "patrice");
-            map.add("admin_email", "patrice@hviewtech.com");
-            map.add("admin_firstname", "Patrice");
-            map.add("admin_lastname", "Nostalgie");
-            map.add("admin_password", "123456");
+            
+            map.add("admin_username", adminUsername);
+            map.add("admin_password", adminPassword);
+            map.add("admin_firstname", adminFirstname);
+            map.add("admin_lastname", adminLastname);
+            map.add("admin_email", adminEmail);
+           
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
             headers.setBasicAuth("hviewtech","123456");
-            result = RuleEngineAdapter.callPostRestAPI(SITE_URL, headers, map); // TODO will optimize the util later.
+            result = RuleEngineAdapter.callPostRestAPI(url, headers, map); // TODO will optimize the util later.
             System.out.println("correlationId: "+ "A new marking instance has been created \n"+ result);
             Log.i("This is response on creating marketing tool: "+result);
-            MarketingAutomationEvent marketingAutomationEvent = MarketingAutomationEvent.builder()
+             marketingAutomationEvent = MarketingAutomationEvent.builder()
                     .customerEmail(marketingAutomationInstanceEvent.getEmail())
                     .customerOrganizationName(marketingAutomationInstanceEvent.getCusOrgName())
                     .customerUserName(marketingAutomationInstanceEvent.getCustomerUserName())
                     .customerFirstName(marketingAutomationInstanceEvent.getCustomerFirstName())
                     .customerLastName(marketingAutomationInstanceEvent.getCustomerLastName())
                     .customerId(marketingAutomationInstanceEvent.getCustomerId()).build();
-            String response = util.objectToString(marketingAutomationEvent);
-            result = response;
+           // String response = util.objectToString(marketingAutomationEvent);
+          //  result = response;
             Log.i("This is response on creating marketing tool: "+result);
-            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, response); // TO DO move to Service classs
+            messageProducer.send(Constants.MARKETING_AUTOMATION_CREATED, marketingAutomationEvent.toString()); // TO DO move to Service classs
             Log.i("Published to kafka success topic");
         }
-        return result;
+        return marketingAutomationEvent;
     }
 
 /*
