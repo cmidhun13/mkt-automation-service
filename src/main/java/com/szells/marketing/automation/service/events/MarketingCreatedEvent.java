@@ -22,7 +22,8 @@ public class MarketingCreatedEvent {
     private String siteName;
     private String domainName;
     private String siteType;
-    private String marketingaussourl;
+    private String marketingAuSsourl;
+    private boolean status;
     
     
 }

@@ -46,18 +46,21 @@ public class MarketingAutomationService {
 
     public MarketingAutomationResponse createMarketingAutomationInstance(MarketingAutomationInstanceEvent marketingAutomationInstanceEvent) throws IOException,Exception {
         Log.i("Initiate to create Markting instance in service " + " - CorrelationId: " + marketingAutomationInstanceEvent.getCorrelationId());
-        String marketingAutomationProvider  = ruleEngineAdapter.getRuleDetailsByCustomerId(marketingAutomationInstanceEvent.getCustomerId(), marketingAutomationInstanceEvent.getCustomerRuleEngineId());
+       // String marketingAutomationProvider  = ruleEngineAdapter.getRuleDetailsByCustomerId(marketingAutomationInstanceEvent.getCustomerId(), marketingAutomationInstanceEvent.getCustomerRuleEngineId());
+        String marketingAutomationProvider="mautic";
+        
         if(marketingAutomationProvider.equalsIgnoreCase((String) "mautic")){
+        	System.out.println("Inside mautic >>>");
             MarketingCreatedEvent marketingCreatedEventResponse =
                     mauticCommunicationAdaptor.createMauticInstance(marketingAutomationInstanceEvent);
             MarketingAutomationResponse marketingAutomationResponse = MarketingAutomationResponse.builder().customerId(marketingAutomationInstanceEvent.getCustomerId())
-                    .correlationId(marketingAutomationInstanceEvent.getCorrelationId())
-                    .emailId(marketingAutomationInstanceEvent.getEmail())
-                    .siteCode(marketingAutomationInstanceEvent.getSiteCode())
-                    .siteName(marketingAutomationInstanceEvent.getSiteName())
-                    .siteType(marketingAutomationInstanceEvent.getSiteType())
-                    .marketingAutomationSsoUrl(marketingAutomationInstanceEvent.getMarketingAutomationSsoUrl())
-                    .status(marketingAutomationInstanceEvent.isStatus())
+                    .correlationId(marketingCreatedEventResponse.getCorrelationId())
+                    .emailId(marketingCreatedEventResponse.getCustomerEmail())
+                    .siteCode(marketingCreatedEventResponse.getSiteCode())
+                    .siteName(marketingCreatedEventResponse.getSiteName())
+                    .siteType(marketingCreatedEventResponse.getSiteType())
+                    .marketingAutomationSsoUrl(marketingCreatedEventResponse.getMarketingAuSsourl())
+                    .status(marketingCreatedEventResponse.isStatus())
                     .build();
             Log.i("End of createMarketingAutomationInstance creation " + " - CorrelationId: " + marketingAutomationInstanceEvent.getCorrelationId());
             MarketingInstanceCreatedEvent marketingInstanceCreatedEvent =
