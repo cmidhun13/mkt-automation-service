@@ -54,8 +54,13 @@ public class MarketingAutomationService {
             MarketingCreatedEvent marketingCreatedEventResponse =
                     mauticCommunicationAdaptor.createMauticInstance(marketingAutomationInstanceEvent);
             MarketingAutomationResponse marketingAutomationResponse = MarketingAutomationResponse.builder().customerId(marketingAutomationInstanceEvent.getCustomerId())
-                    .correlationId(marketingCreatedEventResponse.getCorrelationId())
-                    .emailId(marketingCreatedEventResponse.getCustomerEmail())
+                    .customerId(marketingCreatedEventResponse.getCustomerId())
+                    .customerOrganizationName(marketingCreatedEventResponse.getCustomerOrganizationName())
+                    .customerEmail(marketingCreatedEventResponse.getCustomerEmail())
+                    .customerFirstName(marketingCreatedEventResponse.getCustomerFirstName())
+                    .customerLastName(marketingCreatedEventResponse.getCustomerLastName())
+                    .customerUserName(marketingCreatedEventResponse.getCustomerUserName())
+                    .domainName(marketingCreatedEventResponse.getDomainName())
                     .siteCode(marketingCreatedEventResponse.getSiteCode())
                     .siteName(marketingCreatedEventResponse.getSiteName())
                     .siteType(marketingCreatedEventResponse.getSiteType())
@@ -65,7 +70,7 @@ public class MarketingAutomationService {
             Log.i("End of createMarketingAutomationInstance creation " + " - CorrelationId: " + marketingAutomationInstanceEvent.getCorrelationId());
             MarketingInstanceCreatedEvent marketingInstanceCreatedEvent =
                     createMarketingAutomationCreatedEvent(marketingAutomationResponse, marketingAutomationInstanceEvent.getCorrelationId(),marketingAutomationInstanceEvent.getCustomerId());
-            marketingInstanceCreatedEvent.setMarketingAutomationTenantUrl("https://"+marketingAutomationInstanceEvent.getCusOrgName()+".sawa.rw");
+         //   marketingInstanceCreatedEvent.setMarketingAutomationTenantUrl("https://"+marketingAutomationInstanceEvent.getCusOrgName()+".sawa.rw");
             String jsonMarketingCreatedEvent = util.objectToString(marketingInstanceCreatedEvent);
             System.out.println("Publishing the event for marketing created >>>>>> "+ jsonMarketingCreatedEvent);
             eventPublisher.send(Constants.MARKETING_AUTOMATION_CREATED, jsonMarketingCreatedEvent);
@@ -116,6 +121,17 @@ public class MarketingAutomationService {
                 .cusOrgName(marketingAutomationRequest.getCustomerOrganizationName())
                 .customerRuleEngineId(marketingAutomationRequest.getCustomerRuleEngineId())
                 .email(marketingAutomationRequest.getCustomerEmail())
+                .customerFirstName(marketingAutomationRequest.getCustomerFirstName())
+                .customerLastName(marketingAutomationRequest.getCustomerLastName())
+                .customerUserName(marketingAutomationRequest.getCustomerUserName())
+                .customerPassWord(marketingAutomationRequest.getCustomerPassWord())
+                .domainName(marketingAutomationRequest.getDomainName())
+                .siteCode(marketingAutomationRequest.getSiteCode())
+                .siteName(marketingAutomationRequest.getSiteName())
+                .siteType(marketingAutomationRequest.getSiteType())
+                .marketingAutomationSsoUrl(marketingAutomationRequest.getMarketingAutomationSsoUrl())
+                .status(marketingAutomationRequest.isStatus())
+                		
                 .build();
         String jsonMarketingEvent = util.objectToString(marketingAutomationInstanceEvent);
         System.out.println("jsonMarketingEvent : "+ jsonMarketingEvent);
@@ -154,7 +170,13 @@ public class MarketingAutomationService {
         return MarketingInstanceCreatedEvent.builder()
                 .correlationId(correlationId)
                 .customerId(customerId)
-                .marketingInstanceCreatedStatus(status).build();
+                .customerEmail(marketingAutomationResponse.getEmailId())
+                .customerFirstName(marketingAutomationResponse.getCustomerFirstName())
+                .customerLastName(marketingAutomationResponse.getCustomerLastName())
+                .customerOrganizationName(marketingAutomationResponse.getCustomerOrganizationName())
+                .customerPassWord(marketingAutomationResponse.getCustomerPassWord())
+                .customerUserName(marketingAutomationResponse.getCustomerUserName())
+                .status(Boolean.parseBoolean(status)).build();
 
     }
 }

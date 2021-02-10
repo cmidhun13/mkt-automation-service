@@ -12,14 +12,24 @@ import lombok.NoArgsConstructor;
 public class MarketingInstanceCreatedEvent {
 
     // TO DO add all the fields
-    private String customerId;
-    private String cusOrgName;
+ 
     private String correlationId;
+    private String customerUserName;
+    private String customerEmail;
+    private String customerOrganizationName;
+    private String customerId;
     private String customerRuleEngineId;
-    private String email;
-    private String marketingInstanceCreatedStatus;
-    private String marketingAutomationTenantUrl;
+    
+    //private String email;
+    private String customerFirstName;
+    private String customerLastName;
+    private String customerPassWord;
+    
+    private String siteCode;
+    private String siteName;
+    private String domainName;
+    private String siteType;
+    private String marketingAutomationSsoUrl;
     private boolean status;
-
 
 }
