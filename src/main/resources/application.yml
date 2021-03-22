@@ -56,5 +56,10 @@ kafka:
 #    customer.rule.deleted,
 #   customer.template.created
 
-
+#Spring actuator configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
