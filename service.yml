@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mkt-automation-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8085
+      name: http
+  selector:
+    app: mkt-automation-service

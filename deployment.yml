@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mkt-automation-service
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mkt-automation-service
+  template:
+    metadata:
+      labels:
+        app: mkt-automation-service
+    spec:
+      containers:
+        - image: cmidhun/mkt-automation-service:0.0.1-SNAPSHOT
+          name: mkt-automation-service
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "500m"
+            limits:
+              memory: "500Mi"
+              cpu: "2000m"
+          ports:
+            - containerPort: 8085
